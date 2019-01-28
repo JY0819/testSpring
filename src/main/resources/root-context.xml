@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<!-- 데이터베이스 접속에 관련된 클래스들을 bean을 등록할 수 있다 -->
+	
+	<!-- sqlSessionTemplate 등록 -->
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="sqlSession" />
+	</bean>
+	
+	<!-- sqlSession 등록 -->
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- dataSource 객체 bean 등록 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />
+		<property name="username" value="mybatis" />
+		<property name="password" value="mybatis" />
+		<property name="defaultAutoCommit" value="false" />
+	</bean>
+</beans>
