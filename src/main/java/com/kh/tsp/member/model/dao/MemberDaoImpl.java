@@ -25,7 +25,18 @@ public class MemberDaoImpl implements MemberDao {
 	public int insertMember(SqlSessionTemplate sqlSession, Member m) {
 		return sqlSession.insert("Member.insertMember", m);
 	}
-	
 
+	// 암호화 된 비밀번호 조회용 메소드
+	@Override
+	public String selectEncPassword(SqlSessionTemplate sqlSession, Member m) {
+		return sqlSession.selectOne("Member.selectPwd", m.getUserId());
+	}
+
+	// 로그인 정보 조회용 메소드
+	@Override
+	public Member selectMember(SqlSessionTemplate sqlSession, Member m) {
+		return sqlSession.selectOne("Member.selectLoginUser", m);
+	}
+	
 
 }

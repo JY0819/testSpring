@@ -180,7 +180,7 @@ public class MemberController {
 	8. session에 저장을 할 때 @SessionAttributes 사용하기
 	모델에 Attribute가 추가될 때 자동으로 키 값을 찾아 세션에 등록하는 기능을 제공하는 어노테이션이다.
 	*/
-	@RequestMapping("login.me")
+	/*@RequestMapping("login.me")
 	public String loginCheck(Member m, Model model) {
 		
 		try {
@@ -192,7 +192,7 @@ public class MemberController {
 			model.addAttribute("msg", e.getMessage());
 			return "common/errorPage";
 		}
-	}
+	}*/
 	
 	@RequestMapping("logout.me")
 	public String logout(SessionStatus status) {
@@ -258,4 +258,22 @@ public class MemberController {
 		
 //		return null;
 	}
+	
+	@RequestMapping("login.me")
+	public String loginCheck(Member m, Model model) {
+		try {
+			Member loginUser = ms.loginMember(m);
+			
+			model.addAttribute("loginUser", loginUser);
+			
+			return "redirect:goMain.me";
+			
+		} catch (LoginException e) {
+			model.addAttribute("msg", e.getMessage());
+			
+			return "common/errorPage";
+		}
+		
+	}
+	
 }
