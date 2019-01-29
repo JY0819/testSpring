@@ -29,4 +29,21 @@
 		AND STATUS = 'Y'
 	</select>
 	
+	<insert id="insertMember" parameterType="Member">
+		INSERT INTO MEMBER
+		VALUES(
+		SEQ_MID.NEXTVAL
+		, #{userId}
+		, #{userPwd}
+		, #{userName}
+		, #{email}
+		, #{birthDay}
+		, #{gender}
+		, #{phone}
+		, #{address}
+		, SYSDATE
+		, SYSDATE
+		, DEFAULT
+		)
+	</insert>
 </mapper>

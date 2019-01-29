@@ -6,6 +6,8 @@ import com.kh.tsp.member.model.vo.Member;
 public interface MemberService {
 
 	Member loginMember(Member m) throws LoginException;
+
+	int insertMember(Member m);
 	
 
 }
