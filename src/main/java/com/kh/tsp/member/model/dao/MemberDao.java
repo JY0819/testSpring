@@ -15,4 +15,6 @@ public interface MemberDao {
 
 	Member selectMember(SqlSessionTemplate sqlSession, Member m);
 
+	int insertBoard(SqlSessionTemplate sqlSession);
+
 }
