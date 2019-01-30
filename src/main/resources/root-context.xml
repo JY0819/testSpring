@@ -8,60 +8,55 @@
 	 http://www.springframework.org/schema/tx/spring-tx-4.3.xsd 
 	 http://www.springframework.org/schema/aop 
 	 http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
-	<!-- Root Context: defines shared resources visible to all other web components -->
-	<!-- 데이터베이스 접속에 관련된 클래스들을 bean으로 등록할 수 있다. -->
-	<!-- sqlSessionTemplate 등록 -->
+	
+	<!-- Root Context: defines shared resources visible to all other web components
+		데이터베이스 접속에 관련된 클래스들을 bean으로 등록할 수 있다. -->
+		
+	<!-- sqlSessionTemplate -->
 	<bean id="sqlSessionTemplate"
 		class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg ref="sqlSession" />
 	</bean>
-	<!-- sqlSession도 bean으로 등록한다. -->
+	
+	<!-- sqlSession -->
 	<bean id="sqlSession"
 		class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="configLocation"
 			value="classpath:mybatis-config.xml" />
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	<!-- dataSource 객체 bean 등록 -->
-	<bean id="dataSource"
-		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName"
-			value="oracle.jdbc.driver.OracleDriver" />
-		<property name="url"
-			value="jdbc:oracle:thin:@localhost:1521:xe" />
+	
+	<!-- dataSource -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />
 		<property name="username" value="mybatis" />
 		<property name="password" value="mybatis" />
 		<property name="defaultAutoCommit" value="false" />
 	</bean>
-	<!-- 트랜젝션 매니저 bean 등록 -->
-	<bean id="transactionManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	
+	<!-- 트랜젝션 매니저  -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+	
 	<!-- 어노테이션으로 트랜젝션 설정하기 위해 추가해야 하는 설정 -->
-	<tx:annotation-driven
-		transaction-manager="transactionManager" />
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
 	<!-- 트랜젝션 매니저를 이용해 tx advice를 정의, aop 설정으로 위빙될 객체를 설정하는 것이다. -->
-	<tx:advice id="txAdvice"
-		transaction-manager="transactionManager">
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
-			<tx:method name="select*" read-only="true"
-				rollback-for="Exception" />
-			<tx:method name="insert*" rollback-for="Exception"
-				propagation="REQUIRED" isolation="SERIALIZABLE" />
-			<tx:method name="update*" rollback-for="Exception"
-				propagation="REQUIRED" isolation="SERIALIZABLE" />
-			<tx:method name="delete*" rollback-for="Exception"
-				propagation="REQUIRED" isolation="SERIALIZABLE" />
+			<tx:method name="select*" read-only="true" rollback-for="Exception" />
+			<tx:method name="insert*" rollback-for="Exception" propagation="REQUIRED" isolation="SERIALIZABLE" />
+			<tx:method name="update*" rollback-for="Exception" propagation="REQUIRED" isolation="SERIALIZABLE" />
+			<tx:method name="delete*" rollback-for="Exception" propagation="REQUIRED" isolation="SERIALIZABLE" />
 		</tx:attributes>
 	</tx:advice>
-	<!-- AOP를 이용하여 위의 txAdvice를 적용시키기 위해 pointcut 등록 -->
-	<!-- pointcut : advice가 weaving될 위치 -->
+	
+	<!-- AOP를 이용하여 위의 txAdvice를 적용시키기 위해 pointcut 등록
+		pointcut : advice가 weaving될 위치 -->
 	<aop:config proxy-target-class="true">
-		<aop:pointcut
-			expression="execution(* com.kh.tsp..*ServiceImpl.*(..))"
-			id="serviceMethod" />
-		<aop:advisor advice-ref="txAdvice"
-			pointcut-ref="serviceMethod" id="transactionAdvisor" />
+		<aop:pointcut expression="execution(* com.kh.tsp..*ServiceImpl.*(..))" id="serviceMethod" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethod" id="transactionAdvisor" />
 	</aop:config>
 </beans>

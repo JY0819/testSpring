@@ -74,7 +74,7 @@ public class MemberServiceImpl implements MemberService{
 	}
 
 
-	//1. 트랜젝션 기본값 설정 후 트랜젝션 상태 관리하는 객체를 통해 트랜젝션을 처리하는 방법
+	// 1. 트랜젝션 기본값 설정 후 트랜젝션 상태 관리하는 객체를 통해 트랜젝션을 처리하는 방법
 	/*@Override
 	public int insertMember(Member m) {
 		//트랜젝션에 대해 기본 세팅을 하기 위해 필요한 객체
