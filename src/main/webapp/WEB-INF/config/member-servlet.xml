@@ -16,7 +16,7 @@
 	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
 	
 	<!-- Enables the Spring MVC @Controller programming model -->
-	<annotation-driven />
+	
 
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
 	<resources mapping="/resources/**" location="/resources/" />
@@ -29,6 +29,32 @@
 	
 	<!-- 프록시 설정 추가 -->
 	<aop:aspectj-autoproxy proxy-target-class="true" />
+	
+	<!--  파일 업로드를 하기 위해 bean 등록  -->
+	<beans:bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" id="multipartResolver">
+		<beans:property name="maxUploadSize" value="10000000"/>
+	</beans:bean>
+	
+	<!-- jsonView 설정 -->
+	<beans:bean id="jsonView" class="net.sf.json.spring.web.servlet.view.JsonView" />
+	
+	<!-- BeanNameViewResolver는 없는 자원에 대해 논리적 이름을 가지고 view를 지정한다. -->
+	<beans:bean id="viewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<beans:property name="order" value="1" />
+	</beans:bean>
+	
+	<!-- 메세지 컨버터 추가 -->
+	<!-- 자바 객체를 자바스크립트 객체로 바꿔주는 역할을 한다. -->
+	<beans:bean id="jacksonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+	<beans:bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<beans:property name="messageConverters">
+			<beans:list>
+				<beans:ref bean="jacksonMessageConverter" />
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+	
+	<annotation-driven />
 	
 	<context:component-scan base-package="com.kh.tsp" />
 	

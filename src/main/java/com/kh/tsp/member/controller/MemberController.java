@@ -1,17 +1,29 @@
 package com.kh.tsp.member.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.kh.tsp.common.CommonUtils;
 import com.kh.tsp.member.model.exception.LoginException;
 import com.kh.tsp.member.model.service.MemberService;
 import com.kh.tsp.member.model.vo.Member;
@@ -207,12 +219,14 @@ public class MemberController {
 		return "member/memberJoin";
 	}
 	
+	/*
+	
 	@RequestMapping("insert.me")
 	public String insertMember(Member m, Model model) {
 		
 		System.out.println("member > " + m);
 		
-		/*
+		
 		bcrypt란?
 		DB에 비밀번호를 저장할 목적으로 설계되었다.
 		
@@ -233,7 +247,7 @@ public class MemberController {
 		추가적으로 다이제스트를 생성하는데 걸릴 시간을 결정할 수도 있다. (기본적으로 hash 보다 느리다)
 		
 		1999년에 발표되어 현재까지 사용되는 가장 강력한 비밀번호 저장용 매커니즘이다.
-		 */
+		 
 		
 		String encPassword = passwordEncoder.encode(m.getUserPwd());
 		
@@ -258,6 +272,8 @@ public class MemberController {
 		
 //		return null;
 	}
+	*/
+	
 	
 	@RequestMapping("login.me")
 	public String loginCheck(Member m, Model model) {
@@ -275,5 +291,125 @@ public class MemberController {
 		}
 		
 	}
+	
+	// 사진 업로드 포함 회원가입
+	@RequestMapping("insert.me")
+	public String insertMember(Model model, Member m
+			, HttpServletRequest request, @RequestParam(value="photo", required=false) MultipartFile photo) {
+		System.out.println("Member : " + m);
+		System.out.println("photo : " + photo);
+		
+		// 파일이 저장 될 root
+		String root = request.getSession().getServletContext().getRealPath("resources");
+		// getServletContext : webapp의 절대 경로를 가져온다. 그 밑의 resources
+		
+		// System.out.println(root);
+		
+		String filePath = root + "\\uploadFiles";
+		
+		// 파일명 변경
+		String originFileName = photo.getOriginalFilename();
+		String ext = originFileName.substring(originFileName.lastIndexOf("."));
+		String changeName = CommonUtils.getRandomString();
+		
+		try {
+			photo.transferTo(new File(filePath + "\\" + changeName + ext));
+			
+			m.setUserPwd(passwordEncoder.encode(m.getUserPwd()));
+			
+			if (m.getGender().equals("1") || m.getGender().equals("3")) {
+				m.setGender("M");
+			} else {
+				m.setGender("F");
+			}
+			
+			ms.insertMember(m);
+			
+			return "redirect:goMain.me";
+			
+		} catch (Exception e) {
+			// 실패 시 파일 지워주기
+			new File(filePath + "\\" + changeName + ext).delete();
+			
+			model.addAttribute("msg", "회원 가입 실패 8ㅁ8");
+			return "common/errorPage";
+		}
+		
+	}
+	
+/*	
+	// 1. 스트림을 이용한 AJAX 처리
+	@RequestMapping("duplicationCheck.me")
+	public void duplicationCheck(@RequestParam String userId, HttpServletResponse response) {
+		
+		System.out.println("userId > " + userId );
+		
+		try {
+			response.getWriter().println(false);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	*/
+	
+	/*
+	// 2. ObjectMapper를 이용한 Ajax
+	@RequestMapping("duplicationCheck.me")
+	public void duplicationCheck(@RequestParam String userId, HttpServletResponse response) {
+		ObjectMapper mapper = new ObjectMapper();
+		
+		Member m = new Member();
+		m.setUserId(userId);
+		
+		try {
+			response.getWriter().print(mapper.writeValueAsString(m));
+			
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	*/
+	
+	
+	/*
+	// 3. jsonView를 사용한 방식
+	@RequestMapping("duplicationCheck.me")
+	public ModelAndView duplicationCheck(String userId, ModelAndView mv) {
+		
+		Member m = new Member();
+		m.setUserId(userId);
+		
+		mv.addObject("member", m);
+		mv.setViewName("jsonView");
+		
+		return mv;
+	}
+	*/
+	
+	// 4. @ResponseBody를 이용한 ajax
+	@RequestMapping("duplicationCheck.me")
+	public @ResponseBody HashMap<String, Object> duplicationCheck(@RequestParam String userId, HttpServletResponse response){
+		HashMap<String, Object> hmap = new HashMap<String, Object>();
+		hmap.put("userId", userId);
+		
+		return hmap;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 }

@@ -11,8 +11,7 @@
 	</appender>
 	
 	<appender name="fileLogger" class="org.apache.log4j.DailyRollingFileAppender">
-		<!-- <param name="file" value="C:/Users/user1/git/testSpring/src/main/resources/logs/system.log" />  -->
-		<param name="file" value="C:/Users/cstonny/git/testSpring/src/main/resources/logs/system.log" />
+		<param name="file" value="C:/Users/user1/git/testSpring/src/main/resources/logs/system.log" />
 		<param name="Appender" value="true"/>
 		<param name="DataPattern" value="'.'yyyy-MM-dd"/>
 		<layout class="org.apache.log4j.PatternLayout">
