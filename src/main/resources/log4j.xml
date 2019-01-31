@@ -6,16 +6,40 @@
 	<appender name="console" class="org.apache.log4j.ConsoleAppender">
 		<param name="Target" value="System.out" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%-5p: %c - %m%n" />
+			<param name="ConversionPattern" value="%-5p: %c{1} - %m%n" />
 		</layout>
 	</appender>
+	
+	<appender name="fileLogger" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="file" value="C:/Users/user1/git/testSpring/src/main/resources/logs/system.log" />
+		<param name="Appender" value="true"/>
+		<param name="DataPattern" value="'.'yyyy-MM-dd"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{HH:mm:ss}][%-5p](%F:%L) - %m%n"/>
+		</layout>
+	</appender>
+	
+	<!-- 
+		%p  		debug, info, warn, error등의 priority가 출력
+		$m  		로그 내용이 출력
+		%d  		로깅 이벤트가 발생한 시간 (SimpleDateFormat 문자 사용) %d{yyyy MM dd HH:mm:ss}
+		%t  		로그 이벤트가 발생한 thread의 이름 출력
+		%%  		%표시를 출력
+		%n  		플랫폼에 종속적인 개행 문자
+		%c, %C  	카테고리 표시 // 풀 클래스명 %c{2} 카테고리가 a.b.c일 때 b.c가 출력
+		%F 			로깅이 발생한 프로그램 파일명을 나타냄
+		%L 			로깅이 발생한 라인 수를 나타냄
+		%M 			로깅이 발생한 메소드 이름을 나타냄
+		%r 			어플리케이션 시작 이후부터 로깅이 발생한 시점의 시간(ms)
+	 -->
 	
 	<!-- Application Loggers -->
 	<logger name="com.kh.tsp">
 		<level value="info" />
 	</logger>
 	
-	<!-- 3rdparty Loggers -->
+	<!-- 
+	3rdparty Loggers
 	<logger name="org.springframework.core">
 		<level value="info" />
 	</logger>
@@ -30,12 +54,12 @@
 
 	<logger name="org.springframework.web">
 		<level value="info" />
-	</logger>
+	</logger> -->
 
 	<!-- Root Logger -->
 	<root>
 		<priority value="warn" />
-		<appender-ref ref="console" />
+		<appender-ref ref="fileLogger" />
 	</root>
 	
 </log4j:configuration>
